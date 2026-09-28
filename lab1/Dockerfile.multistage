@@ -1,0 +1,22 @@
+FROM python:3.14.7-slim AS builder
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+
+FROM python:3.14.7-slim
+
+WORKDIR /app
+
+COPY --from=builder /root/.local /root/.local
+
+COPY api.py .
+
+ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONPATH=/root/.local/lib/python3.14/site-package
+
+EXPOSE 5000
+
+CMD ["python3", "api.py"]
