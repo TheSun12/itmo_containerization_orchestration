@@ -228,4 +228,4 @@ helm upgrade --install karma wiremind/karma -n monitoring --set env[0].name=ALER
 
 Вот такие пироги
 
-![мем](/github_lab2/lab2/screenshots/mem2.gif)
+![мем](/lab2/screenshots/mem2.gif)
