@@ -1,0 +1,28 @@
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m 
+
+    route:
+      receiver: 'webhook-default'
+      group_by: ['alertname', 'severity']
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 1h 
+      routes:
+        - match:
+            severity: critical
+          receiver: 'webhook-critical'
+          group_wait: 5s
+          repeat_interval: 10m
+    
+    receivers:
+      - name: 'webhook-default'
+        webhook_configs:
+          - url: 'https://webhook.site/01f9b994-e2fe-479c-ac91-61cc457f44fa'
+            send_resolved: true
+
+      - name: 'webhook-critical'
+        webhook_configs:
+          - url: 'https://webhook.site/01f9b994-e2fe-479c-ac91-61cc457f44fa'
+            send_resolved: true

@@ -1,0 +1,163 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 348B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.7-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 6.75kB done
+#4 DONE 0.1s
+
+#5 [1/5] FROM docker.io/library/python:3.14.7-slim@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d
+#5 resolve docker.io/library/python:3.14.7-slim@sha256:51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d 0.1s done
+#5 DONE 0.3s
+
+#6 [2/5] WORKDIR /app
+#6 DONE 0.1s
+
+#7 [3/5] COPY requirements.txt .
+#7 DONE 0.1s
+
+#8 [4/5] RUN pip install --no-cache-dir -r requirements.txt
+#8 2.721 Collecting Flask==3.0.3 (from -r requirements.txt (line 1))
+#8 2.981   Downloading flask-3.0.3-py3-none-any.whl.metadata (3.2 kB)
+#8 3.056 Collecting gunicorn==23.0.0 (from -r requirements.txt (line 2))
+#8 3.102   Downloading gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+#8 3.173 Collecting prometheus-client==0.21.0 (from -r requirements.txt (line 3))
+#8 3.217   Downloading prometheus_client-0.21.0-py3-none-any.whl.metadata (1.8 kB)
+#8 3.287 Collecting requests==2.32.3 (from -r requirements.txt (line 4))
+#8 3.331   Downloading requests-2.32.3-py3-none-any.whl.metadata (4.6 kB)
+#8 3.401 Collecting opentelemetry-api==1.28.0 (from -r requirements.txt (line 5))
+#8 3.445   Downloading opentelemetry_api-1.28.0-py3-none-any.whl.metadata (1.4 kB)
+#8 3.505 Collecting opentelemetry-sdk==1.28.0 (from -r requirements.txt (line 6))
+#8 3.549   Downloading opentelemetry_sdk-1.28.0-py3-none-any.whl.metadata (1.5 kB)
+#8 3.646 Collecting opentelemetry-exporter-otlp==1.28.0 (from -r requirements.txt (line 7))
+#8 3.690   Downloading opentelemetry_exporter_otlp-1.28.0-py3-none-any.whl.metadata (2.3 kB)
+#8 3.769 Collecting opentelemetry-instrumentation-flask==0.49b0 (from -r requirements.txt (line 8))
+#8 3.814   Downloading opentelemetry_instrumentation_flask-0.49b0-py3-none-any.whl.metadata (2.1 kB)
+#8 3.885 Collecting Werkzeug>=3.0.0 (from Flask==3.0.3->-r requirements.txt (line 1))
+#8 3.928   Downloading werkzeug-3.1.9-py3-none-any.whl.metadata (4.1 kB)
+#8 3.981 Collecting Jinja2>=3.1.2 (from Flask==3.0.3->-r requirements.txt (line 1))
+#8 4.033   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#8 4.089 Collecting itsdangerous>=2.1.2 (from Flask==3.0.3->-r requirements.txt (line 1))
+#8 4.135   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#8 4.208 Collecting click>=8.1.3 (from Flask==3.0.3->-r requirements.txt (line 1))
+#8 4.253   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+#8 4.314 Collecting blinker>=1.6.2 (from Flask==3.0.3->-r requirements.txt (line 1))
+#8 4.358   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#8 4.418 Collecting packaging (from gunicorn==23.0.0->-r requirements.txt (line 2))
+#8 4.476   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+#8 4.743 Collecting charset-normalizer<4,>=2 (from requests==2.32.3->-r requirements.txt (line 4))
+#8 4.792   Downloading charset_normalizer-3.5.2-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+#8 4.901 Collecting idna<4,>=2.5 (from requests==2.32.3->-r requirements.txt (line 4))
+#8 4.946   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+#8 5.013 Collecting urllib3<3,>=1.21.1 (from requests==2.32.3->-r requirements.txt (line 4))
+#8 5.057   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+#8 5.136 Collecting certifi>=2017.4.17 (from requests==2.32.3->-r requirements.txt (line 4))
+#8 5.178   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+#8 5.228 Collecting deprecated>=1.2.6 (from opentelemetry-api==1.28.0->-r requirements.txt (line 5))
+#8 5.273   Downloading deprecated-3.0.0-py3-none-any.whl.metadata (6.5 kB)
+#8 5.340 Collecting importlib-metadata<=8.5.0,>=6.0 (from opentelemetry-api==1.28.0->-r requirements.txt (line 5))
+#8 5.391   Downloading importlib_metadata-8.5.0-py3-none-any.whl.metadata (4.8 kB)
+#8 5.451 Collecting opentelemetry-semantic-conventions==0.49b0 (from opentelemetry-sdk==1.28.0->-r requirements.txt (line 6))
+#8 5.496   Downloading opentelemetry_semantic_conventions-0.49b0-py3-none-any.whl.metadata (2.4 kB)
+#8 5.551 Collecting typing-extensions>=3.7.4 (from opentelemetry-sdk==1.28.0->-r requirements.txt (line 6))
+#8 5.593   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#8 5.652 Collecting opentelemetry-exporter-otlp-proto-grpc==1.28.0 (from opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 5.701   Downloading opentelemetry_exporter_otlp_proto_grpc-1.28.0-py3-none-any.whl.metadata (2.3 kB)
+#8 5.813 Collecting opentelemetry-exporter-otlp-proto-http==1.28.0 (from opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 5.863   Downloading opentelemetry_exporter_otlp_proto_http-1.28.0-py3-none-any.whl.metadata (2.3 kB)
+#8 5.934 Collecting opentelemetry-instrumentation-wsgi==0.49b0 (from opentelemetry-instrumentation-flask==0.49b0->-r requirements.txt (line 8))
+#8 5.981   Downloading opentelemetry_instrumentation_wsgi-0.49b0-py3-none-any.whl.metadata (2.0 kB)
+#8 6.038 Collecting opentelemetry-instrumentation==0.49b0 (from opentelemetry-instrumentation-flask==0.49b0->-r requirements.txt (line 8))
+#8 6.088   Downloading opentelemetry_instrumentation-0.49b0-py3-none-any.whl.metadata (6.2 kB)
+#8 6.148 Collecting opentelemetry-util-http==0.49b0 (from opentelemetry-instrumentation-flask==0.49b0->-r requirements.txt (line 8))
+#8 6.193   Downloading opentelemetry_util_http-0.49b0-py3-none-any.whl.metadata (2.5 kB)
+#8 6.252 Collecting googleapis-common-protos~=1.52 (from opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 6.295   Downloading googleapis_common_protos-1.75.5-py3-none-any.whl.metadata (8.5 kB)
+#8 7.015 Collecting grpcio<2.0.0,>=1.63.2 (from opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 7.060   Downloading grpcio-1.84.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.8 kB)
+#8 7.130 Collecting opentelemetry-exporter-otlp-proto-common==1.28.0 (from opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 7.175   Downloading opentelemetry_exporter_otlp_proto_common-1.28.0-py3-none-any.whl.metadata (1.8 kB)
+#8 7.251 Collecting opentelemetry-proto==1.28.0 (from opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 7.300   Downloading opentelemetry_proto-1.28.0-py3-none-any.whl.metadata (2.3 kB)
+#8 7.810 Collecting wrapt<2.0.0,>=1.0.0 (from opentelemetry-instrumentation==0.49b0->opentelemetry-instrumentation-flask==0.49b0->-r requirements.txt (line 8))
+#8 7.856   Downloading wrapt-1.17.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.4 kB)
+#8 8.055 Collecting protobuf<6.0,>=5.0 (from opentelemetry-proto==1.28.0->opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 8.131   Downloading protobuf-5.29.6-cp38-abi3-manylinux2014_x86_64.whl.metadata (592 bytes)
+#8 8.138 INFO: pip is looking at multiple versions of googleapis-common-protos to determine which version is compatible with other requirements. This could take a while.
+#8 8.140 Collecting googleapis-common-protos~=1.52 (from opentelemetry-exporter-otlp-proto-grpc==1.28.0->opentelemetry-exporter-otlp==1.28.0->-r requirements.txt (line 7))
+#8 8.183   Downloading googleapis_common_protos-1.75.4-py3-none-any.whl.metadata (8.5 kB)
+#8 8.237   Downloading googleapis_common_protos-1.75.3-py3-none-any.whl.metadata (8.5 kB)
+#8 8.288   Downloading googleapis_common_protos-1.75.2-py3-none-any.whl.metadata (8.5 kB)
+#8 8.339   Downloading googleapis_common_protos-1.75.1-py3-none-any.whl.metadata (8.5 kB)
+#8 8.391   Downloading googleapis_common_protos-1.75.0-py3-none-any.whl.metadata (8.6 kB)
+#8 8.488 Collecting zipp>=3.20 (from importlib-metadata<=8.5.0,>=6.0->opentelemetry-api==1.28.0->-r requirements.txt (line 5))
+#8 8.537   Downloading zipp-4.1.0-py3-none-any.whl.metadata (3.6 kB)
+#8 8.676 Collecting MarkupSafe>=2.0 (from Jinja2>=3.1.2->Flask==3.0.3->-r requirements.txt (line 1))
+#8 8.722   Downloading markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+#8 8.776 Downloading flask-3.0.3-py3-none-any.whl (101 kB)
+#8 8.911 Downloading gunicorn-23.0.0-py3-none-any.whl (85 kB)
+#8 9.024 Downloading prometheus_client-0.21.0-py3-none-any.whl (54 kB)
+#8 9.164 Downloading requests-2.32.3-py3-none-any.whl (64 kB)
+#8 9.300 Downloading opentelemetry_api-1.28.0-py3-none-any.whl (64 kB)
+#8 9.420 Downloading opentelemetry_sdk-1.28.0-py3-none-any.whl (118 kB)
+#8 9.568 Downloading opentelemetry_exporter_otlp-1.28.0-py3-none-any.whl (7.0 kB)
+#8 9.617 Downloading opentelemetry_instrumentation_flask-0.49b0-py3-none-any.whl (14 kB)
+#8 9.677 Downloading opentelemetry_exporter_otlp_proto_grpc-1.28.0-py3-none-any.whl (18 kB)
+#8 9.730 Downloading opentelemetry_exporter_otlp_proto_common-1.28.0-py3-none-any.whl (18 kB)
+#8 9.785 Downloading opentelemetry_exporter_otlp_proto_http-1.28.0-py3-none-any.whl (17 kB)
+#8 9.840 Downloading opentelemetry_instrumentation-0.49b0-py3-none-any.whl (30 kB)
+#8 9.898 Downloading opentelemetry_instrumentation_wsgi-0.49b0-py3-none-any.whl (13 kB)
+#8 9.959 Downloading opentelemetry_proto-1.28.0-py3-none-any.whl (55 kB)
+#8 10.05 Downloading opentelemetry_semantic_conventions-0.49b0-py3-none-any.whl (159 kB)
+#8 10.19 Downloading opentelemetry_util_http-0.49b0-py3-none-any.whl (6.9 kB)
+#8 10.26 Downloading charset_normalizer-3.5.2-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (255 kB)
+#8 10.47 Downloading googleapis_common_protos-1.75.0-py3-none-any.whl (300 kB)
+#8 10.70 Downloading grpcio-1.84.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (7.2 MB)
+#8 14.10    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.2/7.2 MB 2.1 MB/s  0:00:03
+#8 14.18 Downloading idna-3.20-py3-none-any.whl (69 kB)
+#8 14.23 Downloading importlib_metadata-8.5.0-py3-none-any.whl (26 kB)
+#8 14.29 Downloading protobuf-5.29.6-cp38-abi3-manylinux2014_x86_64.whl (320 kB)
+#8 14.44 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#8 14.49 Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+#8 14.57 Downloading wrapt-1.17.3-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (87 kB)
+#8 14.63 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#8 14.68 Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+#8 14.76 Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#8 14.82 Downloading deprecated-3.0.0-py3-none-any.whl (21 kB)
+#8 14.87 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#8 14.92 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#8 15.01 Downloading markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (23 kB)
+#8 15.05 Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#8 15.12 Downloading werkzeug-3.1.9-py3-none-any.whl (228 kB)
+#8 15.24 Downloading zipp-4.1.0-py3-none-any.whl (10 kB)
+#8 15.57 Installing collected packages: zipp, wrapt, urllib3, typing-extensions, protobuf, prometheus-client, packaging, opentelemetry-util-http, MarkupSafe, itsdangerous, idna, click, charset-normalizer, certifi, blinker, Werkzeug, requests, opentelemetry-proto, Jinja2, importlib-metadata, gunicorn, grpcio, googleapis-common-protos, deprecated, opentelemetry-exporter-otlp-proto-common, opentelemetry-api, Flask, opentelemetry-semantic-conventions, opentelemetry-sdk, opentelemetry-instrumentation, opentelemetry-instrumentation-wsgi, opentelemetry-exporter-otlp-proto-http, opentelemetry-exporter-otlp-proto-grpc, opentelemetry-instrumentation-flask, opentelemetry-exporter-otlp
+#8 17.49 
+#8 17.49 Successfully installed Flask-3.0.3 Jinja2-3.1.6 MarkupSafe-3.0.3 Werkzeug-3.1.9 blinker-1.9.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 deprecated-3.0.0 googleapis-common-protos-1.75.0 grpcio-1.84.0 gunicorn-23.0.0 idna-3.20 importlib-metadata-8.5.0 itsdangerous-2.2.0 opentelemetry-api-1.28.0 opentelemetry-exporter-otlp-1.28.0 opentelemetry-exporter-otlp-proto-common-1.28.0 opentelemetry-exporter-otlp-proto-grpc-1.28.0 opentelemetry-exporter-otlp-proto-http-1.28.0 opentelemetry-instrumentation-0.49b0 opentelemetry-instrumentation-flask-0.49b0 opentelemetry-instrumentation-wsgi-0.49b0 opentelemetry-proto-1.28.0 opentelemetry-sdk-1.28.0 opentelemetry-semantic-conventions-0.49b0 opentelemetry-util-http-0.49b0 packaging-26.3 prometheus-client-0.21.0 protobuf-5.29.6 requests-2.32.3 typing-extensions-4.16.0 urllib3-2.8.0 wrapt-1.17.3 zipp-4.1.0
+#8 17.49 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 DONE 18.0s
+
+#9 [5/5] COPY api.py .
+#9 DONE 0.1s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 2.7s done
+#10 exporting manifest sha256:3cdf2cca2e0acd2378b4e48b591465dc6e0c49cbd4e6b9f74a37004c744e0cc1 0.0s done
+#10 exporting config sha256:c5227c6648b08d8db7254eef3ab83f411bd2dfb4998daf75c67b1714aad470ff 0.0s done
+#10 exporting attestation manifest sha256:8bc2a4047cc60bdb3441859c3079a986e2159f696d0eabeec390ca2479203bac 0.1s done
+#10 exporting manifest list sha256:0f2f2a7c9b1964c6a685f20070362625363d334513eaae9dfa3e0026c6b02736
+#10 exporting manifest list sha256:0f2f2a7c9b1964c6a685f20070362625363d334513eaae9dfa3e0026c6b02736 0.0s done
+#10 naming to docker.io/library/api:latest done
+#10 unpacking to docker.io/library/api:latest
+#10 unpacking to docker.io/library/api:latest 1.2s done
+#10 DONE 4.2s
