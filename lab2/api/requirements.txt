@@ -1,0 +1,8 @@
+Flask==3.0.3
+gunicorn==23.0.0
+prometheus-client==0.21.0
+requests==2.32.3
+opentelemetry-api==1.28.0
+opentelemetry-sdk==1.28.0
+opentelemetry-exporter-otlp==1.28.0
+opentelemetry-instrumentation-flask==0.49b0
