@@ -76,7 +76,7 @@ kubectl port-forward -n monitoring svc/ptometheus-grafana 3000:80
 
 ## Часть 2 - Логи (Loki + Grafana)
 
-Изначально я пыталась установить loki-stack. Однако с ним стали возникать проблемы. Я начала ощущать себя Тором, у которого Локи постоянно умирает и воскрешает.
+Изначально я пыталась установить loki-stack. Однако с ним стали возникать проблемы. Я начала ощущать себя Тором, у которого Локи постоянно умирает и воскресает.
 
 ![Локи](/lab2/screenshots/mem1.jpg)
 
@@ -101,7 +101,7 @@ Only one datasource per organization can be marked as default
 helm upgrade --install loki grafana/loki -n monitoring -f ~/lab2/k8s/values/loki-values.yaml
 ```
 
-Казалось бы, все должно заработать, но нет. Loki не запускался, крутясь в `CrashLoopBackOff` со следующей ошибков в логах:
+Казалось бы, все должно заработать, но нет. Loki не запускался, крутясь в `CrashLoopBackOff` со следующей ошибкой в логах:
 
 ```bash
 "mkdir /var/loki: read-only file system error initialising module: ruler-storage"
@@ -111,7 +111,7 @@ helm upgrade --install loki grafana/loki -n monitoring -f ~/lab2/k8s/values/loki
 
 Для решения этой проблемы я пробовала использовать `extraVolumes` и `extraVolumeMounts`, переносить их на верхний уровень. Однако ничего из этого не работало, поля просто игнорировались. 
 
-В результате пришлось прибегунуть к ручной правке StatefulSet через kubectl edit. В volumes я дважды добавила volume loki.
+В результате пришлось прибегнуть к ручной правке StatefulSet через kubectl edit. В volumes я дважды добавила volume loki.
 
 ```bash
 KUBE_EDITOR=nano kubectl edit statefulset -n monitoring loki
