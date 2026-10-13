@@ -1,0 +1,39 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-labels
+  annotations:
+    policies.kyverno.io/title: Require Standard Labels
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      All pods must carry the standart Kubernetes recommended labels
+spec:
+  validationActions: [Deny]
+  matchConstraints:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - kube-public
+            - kube-node-lease
+            - cnpg-system
+            - kyverno
+            - monitoring
+    objectSelector:
+      matchExpressions:
+        - key: cnpg.io/cluster
+          operator: DoesNotExist
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - expression: >-
+        has(object.metadata.labels) &&
+          "app.kubernetes.io/name" in object.metadata.labels &&
+          "app.kubernetes.io/part-of" in object.metadata.labels &&
+          "app.kubernetes.io/managed-by" in object.metadata.labels
+      message: "All pods must have labels: app.kubernetes.io/name, app.kubernetes.io/part-of, app.kubernetes.io/managed-by"

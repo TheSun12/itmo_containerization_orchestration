@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-untrusted-registry
+  namespace: default
+  labels:
+    app: test
+spec:
+  containers:
+    - name: app
+      image: evil-registry.example.com/malware:latest
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 128Mi

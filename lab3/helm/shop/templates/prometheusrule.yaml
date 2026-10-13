@@ -1,0 +1,48 @@
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: shop-alerts
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+    release: prometheus
+spec:
+  groups:
+    - name: shop.rules
+      interval: 30s
+      rules:
+        - alert: ServiceDown
+          expr: absent(up{job="shop-api"})
+          for: 2m 
+          labels:
+            severity: critical
+            service: shop-api
+          annotations:
+            summary: "Сервис api недоступен"
+            description: "Prometheus не может скейпить дольше 2 минут. Сервис полностью упал"
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(shop_api_errors_total[2m])) by (exported_endpoint)
+            /
+            sum(rate(shop_api_requests_total[2m])) by (exported_endpoint)
+            > 0.05
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api 
+          annotations:
+            summary: 'Высокая доля ошибок на {{ "{{ $labels.exported_endpoint }}" }}'
+            description: "Доля ошибок 5хх превышает 5% дольше 2 минут"
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(shop_api_requests_duraction_seconds_bucket[2m])) by (le, exported_endpoint) 
+            ) > 2
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api 
+          annotations:
+            summary: 'Высокое время ответа на {{ "{{ $labels.exported_endpoint }}" }}'
+            description: "95% запросов выполняется дольше 2 секунд на протяжении 2 минут"
+{{- end }}
