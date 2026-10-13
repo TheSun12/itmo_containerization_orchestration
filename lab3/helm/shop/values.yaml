@@ -1,0 +1,51 @@
+image:
+  registry: docker.io
+  pullPolicy: IfNotPresent
+
+api:
+  replicas: 3
+  image:
+    repository: shop-api
+    tag: "v3"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  service:
+    port: 8080
+    type: ClusterIP
+  healthCheck:
+    enabled: true
+    path: /health
+  startupDbCheck: true
+  healthFail: false
+
+worker:
+  replicas: 2
+  image:
+    repository: shop-worker
+    tag: "v1"
+  resources:
+    requests:
+      cpu: 30m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  interval: 5
+
+postgres:
+  host: shop-postgres-rw
+  port: 5432
+  database: shop
+  user: shop
+  existingSecret: shop-postgres-app
+
+serviceMonitor:
+  enabled: true
+
+prometheusRule:
+  enabled: true

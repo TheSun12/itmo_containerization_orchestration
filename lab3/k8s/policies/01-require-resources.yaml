@@ -1,0 +1,38 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-resources
+  annotations:
+    policies.kyverno.io/title: Require Resources Limits
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/description: >-
+      Все поды в кластере должны иметь requests и limits для cpu и memory
+spec:
+  validationActions: [Deny]
+  matchConstraints:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - kube-public
+            - kube-node-lease
+            - cnpg-system
+            - kyverno
+            - monitoring
+    objectSelector:
+      matchExpressions:
+        - key: cnpg.io/cluster
+          operator: DoesNotExist
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, has(c.resources) && has(c.resources.requests) && 
+          has(c.resources.requests.cpu) && has(c.resources.requests.memory) && 
+          has(c.resources.limits.cpu) && has(c.resources.limits.memory))
+      message: "All pods must declare requests and limits for cpu and memory"

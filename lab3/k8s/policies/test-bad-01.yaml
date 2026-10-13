@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-no-resources
+  namespace: default
+  labels:
+    app: test
+spec:
+  containers:
+    - name: app
+      image: shop-api:latest
+      ports:
+        - containerPort: 8080
