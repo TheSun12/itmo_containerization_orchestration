@@ -2,15 +2,15 @@
 
 ## Часть 0 - Сервисы
 
-В первую очередь я закодила HTTP-сервис [`api`](/shop-api/api.py) на Python с эндпоинтами:
+В первую очередь я закодила HTTP-сервис [`api`](/lab3/shop-api/api.py) на Python с эндпоинтами:
 
 - `GET /health` - возвращает `ok`, но при `HEALTH_FAIL = true` срабатывает ошибка 500,
 - `POST /order` - пишет заказ в postgres,
 - `GET /orders` - читает и отдает список заказов.
 
-К нему дописала [requirements.txt](/shop-api/requirements.txt) и [Dockerfile](/shop-api/Dockerfile).
+К нему дописала [requirements.txt](/lab3/shop-api/requirements.txt) и [Dockerfile](/lab3/shop-api/Dockerfile).
 
-После этого я закодила [worker](/shop-worker/worker.py), который читает файлы из postgres и помечает их обработанными. К нему аналогично написала [requirements.txt](/shop-worker/requirements.txt) и [Dockerfile](/shop-worker/Dockerfile).
+После этого я закодила [worker](/lab3/shop-worker/worker.py), который читает файлы из postgres и помечает их обработанными. К нему аналогично написала [requirements.txt](/lab3/shop-worker/requirements.txt) и [Dockerfile](/lab3/shop-worker/Dockerfile).
 
 Далее я собрала образы и загрузила их в minikube:
 
@@ -23,7 +23,8 @@ minikube image load shop-worker:latest
 ```
 
 Проверила, что образы успешно загрузились:
-![Проверка загрузки образов](/screenshots/image1.png)
+
+![Проверка загрузки образов](/lab3/screenshots/image1.png)
 
 ## Часть 1 - Ограждения на кластер
 
@@ -42,7 +43,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
 После установки проверила, что все успешно заработало:
 
-![Проверка установки Kyverno](/screenshots/image2.png)
+![Проверка установки Kyverno](/lab3/screenshots/image2.png)
 
 Далее я составила 5 правил для всего кластера:
 
@@ -52,7 +53,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
   Что вводит правило: любой Pod в кластере обязан явно указать requests.memory, requests.cpu, limits.memory и limits.cpu. Без этого создание отклонится
 
-  Для правила создала файл [01-require-resources.yaml](/k8s/policies/01-require-resources.yaml).
+  Для правила создала файл [01-require-resources.yaml](/lab3/k8s/policies/01-require-resources.yaml).
 
   Применила правило командой
 
@@ -60,13 +61,13 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
   kubectl apply -f ~/lab3/k8s/policies/01-require-resources.yaml
   ```
 
-  Протестировала правило на [плохом](/k8s/policies/test-bad-01.yaml):
+  Протестировала правило на [плохом](/lab3/k8s/policies/test-bad-01.yaml):
 
-  ![Плохой тест 1 правила](/screenshots/image3.png) 
+  ![Плохой тест 1 правила](/lab3/screenshots/image3.png) 
   
-  И [хорошем](/k8s/policies/test-good-01.yaml) тесте:
+  И [хорошем](/lab3/k8s/policies/test-good-01.yaml) тесте:
 
-  ![Хороший тест 1 правила](/screenshots/image4.png)
+  ![Хороший тест 1 правила](/lab3/screenshots/image4.png)
 
 - Доверенный реестр образов
   
@@ -76,7 +77,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
   Я выбрала в качестве доверенных источников `docker.io`, `ghcr.io`, `registry.k8s.io` и `quay.io`. 
 
-  Для правила создала файл [02-trusted-registry.yaml](/k8s/policies/02-trusted-registry.yaml).
+  Для правила создала файл [02-trusted-registry.yaml](/lab3/k8s/policies/02-trusted-registry.yaml).
 
   Применила правило командой
 
@@ -84,9 +85,9 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
   kubectl apply -f ~/lab3/k8s/policies/02-trusted-registry.yaml
   ```
 
-  Протестировала правило на [плохом](/k8s/policies/test-bad-02.yaml) и [хорошем](/k8s/policies/test-good-02.yaml) тесте:
+  Протестировала правило на [плохом](/lab3/k8s/policies/test-bad-02.yaml) и [хорошем](/lab3/k8s/policies/test-good-02.yaml) тесте:
 
-  ![Плохой и хороший тест 2 правила](/screenshots/image5.png)
+  ![Плохой и хороший тест 2 правила](/lab3/screenshots/image5.png)
 
 - Обязательные метки
   
@@ -94,7 +95,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
   Что вводит правило: все поды должны иметь обязательный набор меток.
 
-  Для правила создала файл [03-require-labels.yaml](/k8s/policies/03-require-labels.yaml).
+  Для правила создала файл [03-require-labels.yaml](/lab3/k8s/policies/03-require-labels.yaml).
 
   Применила правило командой
 
@@ -102,9 +103,9 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
   kubectl apply -f ~/lab3/k8s/policies/03-require-labels.yaml
   ```
 
-  Протестировала правило на [плохом](/k8s/policies/test-bad-03.yaml) и [хорошем](/k8s/policies/test-good-03.yaml) тесте:
+  Протестировала правило на [плохом](/lab3/k8s/policies/test-bad-03.yaml) и [хорошем](/lab3/k8s/policies/test-good-03.yaml) тесте:
 
-  ![Плохой и хороший тест 3 правила](/screenshots/image6.png)
+  ![Плохой и хороший тест 3 правила](/lab3/screenshots/image6.png)
 
 - Запрет privileged-контейнеров
 
@@ -112,7 +113,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
   Что вводит правило: любой под с `privileged: true` в `securityContent` отклоняется.
 
-  Для правила создала файл [04-no-privileged.yaml](/k8s/policies/04-no-privileged.yaml).
+  Для правила создала файл [04-no-privileged.yaml](/lab3/k8s/policies/04-no-privileged.yaml).
 
   Применила правило командой
 
@@ -120,13 +121,13 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
   kubectl apply -f ~/lab3/k8s/policies/04-no-privileged.yaml
   ```
 
-  Протестировала правило на [плохом](/k8s/policies/test-bad-04.yaml):
+  Протестировала правило на [плохом](/lab3/k8s/policies/test-bad-04.yaml):
 
-  ![Плохой тест 4 правила](/screenshots/image7.png) 
+  ![Плохой тест 4 правила](/lab3/screenshots/image7.png) 
   
-  И [хорошем](/k8s/policies/test-good-04.yaml) тесте:
+  И [хорошем](/lab3/k8s/policies/test-good-04.yaml) тесте:
 
-  ![Хороший тест 4 правила](/screenshots/image8.png)
+  ![Хороший тест 4 правила](/lab3/screenshots/image8.png)
 
 - Запрет :latest-тега
   
@@ -134,7 +135,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
 
   Что вводит правило: все образы в кластере имеют фиксированный тег - конкретную версию. 
 
-  Для правила создала файл [05-no-latest-tag.yaml](/k8s/policies/05-no-latest-tag.yaml).
+  Для правила создала файл [05-no-latest-tag.yaml](/lab3/k8s/policies/05-no-latest-tag.yaml).
 
   Применила правило командой
 
@@ -142,17 +143,17 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
   kubectl apply -f ~/lab3/k8s/policies/05-no-latest-tag.yaml
   ```
 
-  Протестировала правило на [плохом](/k8s/policies/test-bad-05.yaml) и [хорошем](/k8s/policies/test-good-05.yaml) тесте:
+  Протестировала правило на [плохом](/lab3/k8s/policies/test-bad-05.yaml) и [хорошем](/lab3/k8s/policies/test-good-05.yaml) тесте:
 
-  ![Плохой и хороший тест 1 правила](/screenshots/image10.png)
+  ![Плохой и хороший тест 1 правила](/lab3/screenshots/image10.png)
 
 Проверила, что все правила активны:
 
-![Проверка активности правил](/screenshots/image9.png)
+![Проверка активности правил](/lab3/screenshots/image9.png)
 
 ## Часть 2 - Чарт api и worker
 
-Сначала я написала [Chart.yaml](/helm/shop/Chart.yaml), [values.yaml](/helm/shop/values.yaml), [_helpers.tpl](/helm/shop/templates/_helpers.tpl) с общими метками и шаблоны [api-deployment.yaml](/helm/shop/templates/api-deployment.yaml), [api-service.yaml](/helm/shop/templates/api-service.yaml) и [worker-deployment.yaml](/helm/shop/templates/worker-deployment.yaml).
+Сначала я написала [Chart.yaml](/lab3/helm/shop/Chart.yaml), [values.yaml](/lab3/helm/shop/values.yaml), [_helpers.tpl](/lab3/helm/shop/templates/_helpers.tpl) с общими метками и шаблоны [api-deployment.yaml](/lab3/helm/shop/templates/api-deployment.yaml), [api-service.yaml](/lab3/helm/shop/templates/api-service.yaml) и [worker-deployment.yaml](/lab3/helm/shop/templates/worker-deployment.yaml).
 
 Когда я все создала, то вспомнила, что мои образы собирались с тегом `:latest`, что противоречит созданному 5 правилу. Поэтому я пересобрала образы:
 
@@ -177,7 +178,7 @@ kubectl create secret generic shop-postgres-app \
 helm install shop shop/ --namespace shop --wait --timeout 3m
 ```
 
-![Проверка подов](/screenshots/image11.png)
+![Проверка подов](/lab3/screenshots/image11.png)
 
 После я перешла к проверке работы:
 
@@ -185,7 +186,7 @@ helm install shop shop/ --namespace shop --wait --timeout 3m
   
   Я посмотрела имя одного из подов и удалила его. Сразу после удаления Deployment создал новый под:
 
-  ![Reconciliation](/screenshots/image12.png)
+  ![Reconciliation](/lab3/screenshots/image12.png)
 
 - Проверка `scale up/down` через `values.yaml`
 
@@ -193,11 +194,11 @@ helm install shop shop/ --namespace shop --wait --timeout 3m
 
   При проверке я увидела, что запустилось 4 пода.
 
-  ![Проверка подов](/screenshots/image13.png)
+  ![Проверка подов](/lab3/screenshots/image13.png)
 
   Потом я вернула обратно количество реплик на 3, и при перезапуске снова стало 3 пода.
 
-  ![Проверка подов](/screenshots/image14.png)
+  ![Проверка подов](/lab3/screenshots/image14.png)
 
 - Проверка `rolling update` - обновление без `downtime`
 
@@ -222,7 +223,7 @@ helm install shop shop/ --namespace shop --wait --timeout 3m
 
   Старые и новые поды сосуществуют - старые удаляются только после того, как новые пройдут readiness:
 
-  ![Проверка подов](/screenshots/image15.png)
+  ![Проверка подов](/lab3/screenshots/image15.png)
 
   Проверка результатов curl:
 
@@ -232,7 +233,7 @@ helm install shop shop/ --namespace shop --wait --timeout 3m
 
   Все запросы со статусом `200`, ничего не падало.
 
-  ![Проверка статуса](/screenshots/image16.png)
+  ![Проверка статуса](/lab3/screenshots/image16.png)
 
 - Проверка сломанной версии + rollback
 
@@ -242,11 +243,11 @@ helm install shop shop/ --namespace shop --wait --timeout 3m
 
   Проверяем работу подов. Старые поды остаются, т.к. новые не могут включиться. Это защита от сломанных обновлений. Kubernetes не удаляет рабочие поды, пока новые не готовы.
 
-  ![Проверка подов](/screenshots/image17.png)
+  ![Проверка подов](/lab3/screenshots/image17.png)
 
   Проверяем curl. Все запросы curl - 200. Значит, ничего не падало.
 
-  ![Проверка статуса](/screenshots/image18.png)
+  ![Проверка статуса](/lab3/screenshots/image18.png)
 
 ## Часть 3 - Postgres через оператора
 
@@ -269,7 +270,7 @@ helm install cnpg cnpg/cloudnative-pg -n cnpg-system --set replicaCount=1
 
 Установка заблокировалась 3 правилом (реестр доверенных источников). Для более легкой установки добавила `namespace` в исключение из правил.
 
-Также я создала шаблон для объекта оператора [postgres-cluster.yaml](/helm/shop/templates/postgres-cluster.yaml).
+Также я создала шаблон для объекта оператора [postgres-cluster.yaml](/lab3/helm/shop/templates/postgres-cluster.yaml).
 
 Проверка работы Reconciliation оператора:
   
@@ -282,11 +283,11 @@ helm install cnpg cnpg/cloudnative-pg -n cnpg-system --set replicaCount=1
 
 Под сразу вернулся обратно:
 
-![Проверка reconciliation](/screenshots/image19.png)
+![Проверка reconciliation](/lab3/screenshots/image19.png)
 
 Заказы тоже не потерялись и остались в том же виде на месте:
 
-![Проверка, что таблица сохранила данные](/screenshots/image20.png)
+![Проверка, что таблица сохранила данные](/lab3/screenshots/image20.png)
 
 Разница между controller-manager и оператором заключается в том, что первый может просто перезапустить под, а оператор знает специфику postgres и может повысить реплику до primary, бэкапнуть, делать репликацию, обновление паролей и т.д.
 
@@ -300,29 +301,29 @@ sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/kube-apiserver.yaml.b
 
 При проверке видно, что нода недоступна. Ничего изменить в ней нельзя, т.к. изменения просто не пройдут.
 
-![Пропажа ноды](/screenshots/image23.png)
+![Пропажа ноды](/lab3/screenshots/image23.png)
 
 При этом, если обратиться по `curl`, сервис отвечает.
 
-![Ответ по curl](/screenshots/image21.png)
+![Ответ по curl](/lab3/screenshots/image21.png)
 
 Потом я вернула `kube-apiserver` на место, и нода вернулась.
 
-![Возвращение ноды](/screenshots/image22.png)
+![Возвращение ноды](/lab3/screenshots/image22.png)
 
 ## Часть 5 - Мониторинг
 
-Для мониторинга я добавила в чарт [servicemonitor.yaml](/helm/shop/templates/servicemonitor.yaml) и [prometheusrule.yaml](/helm/shop/templates/prometheusrule.yaml). 
+Для мониторинга я добавила в чарт [servicemonitor.yaml](/lab3/helm/shop/templates/servicemonitor.yaml) и [prometheusrule.yaml](/lab3/helm/shop/templates/prometheusrule.yaml). 
 
 Дальше я применила чарты и запустила Prometheus.
 
 В Prometheus я нашла `shop-api` сервис со статусом `UP`, что означает, что все 3 реплики успешно подключились. 
 
-![shop-api в Prometheus](/screenshots/image24.png)
+![shop-api в Prometheus](/lab3/screenshots/image24.png)
 
 Алерты я оставила со 2 лабораторной, т.к. считаю их подходящими.
 
-![алерты](/screenshots/image25.png)
+![алерты](/lab3/screenshots/image25.png)
 
 Чтобы спровоцировать срабатывание алерта `ServiceDown` (падение сервиса) я уменьшила количество реплик до 0 командой
 
@@ -334,18 +335,18 @@ kubectl scale deployment shop-api -n shop --replicas=0
 
 В Prometheus статус алерта изменился на `FIRING`:
 
-![firing alert](/screenshots/image26.png)
+![firing alert](/lab3/screenshots/image26.png)
 
 В Alertmanager `ServiceDown` появился в списке:
 
-![Alertmanager](/screenshots/image27.png)
+![Alertmanager](/lab3/screenshots/image27.png)
 
 В Karma `ServiceDown` появился в дашборде:
 
-![Karma](/screenshots/image28.png)
+![Karma](/lab3/screenshots/image28.png)
 
 Следовательно, алерты в системе корректно работают.
 
 Вот такие пироги
 
-![котик](/screenshots/cat.gif)
+![котик](/lab3/screenshots/cat.gif)
