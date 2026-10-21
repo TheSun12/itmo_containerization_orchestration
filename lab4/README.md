@@ -2,13 +2,13 @@
 
 ## Часть 0 - Сервис batch
 
-В начале я создала batch-сервис, который бесконечно грузит CPU и потребляет память (файл - [batch.py](/batch/batch.py)).
+В начале я создала batch-сервис, который бесконечно грузит CPU и потребляет память (файл - [batch.py](/lab4/batch/batch.py)).
 
-К нему я написала [Dockerfile](/batch/Dockerfile)
+К нему я написала [Dockerfile](/lab4/batch/Dockerfile)
 
 При запуске сервиса наглядно видно, как он начинает поедать ресурсы:
 
-![работа batch](/screenshots/image1.png)
+![работа batch](/lab4/screenshots/image1.png)
 
 ## Часть 1 - Выбери механизм разнесения
 
@@ -20,7 +20,7 @@
 
 Я выбрала `topologySpreadContaints`, т.к. это более современный вариант с гарантированным распределением и более гибкой реализацией. Жесткое разнесение мне показалось избыточным для работы.
 
-В [values.yaml](/helm/shop/values.yaml) добавила выбор механизма:
+В [values.yaml](/lab4/helm/shop/values.yaml) добавила выбор механизма:
 
 ```yaml
 spread:
@@ -31,9 +31,9 @@ spread:
     affinityType: "required"
 ```
 
-Также я создала шаблон [_spread.tpl](/helm/shop/templates/_spread.tpl) для реализации логики, где в зависимости от `mechanism` в `values.yaml` рендерится либо блок `affinity`.`podAntiAffinity`, либо `topologySpreadConstraints`.
+Также я создала шаблон [_spread.tpl](/lab4/helm/shop/templates/_spread.tpl) для реализации логики, где в зависимости от `mechanism` в `values.yaml` рендерится либо блок `affinity`.`podAntiAffinity`, либо `topologySpreadConstraints`.
 
-Далее добавила в [api-deployment.yaml](/helm/shop/templates/api-deployment.yaml):
+Далее добавила в [api-deployment.yaml](/lab4/helm/shop/templates/api-deployment.yaml):
 
 ```yaml
 spec:
@@ -42,7 +42,7 @@ spec:
 
 Проверила, что все корректно сохранилось и рендерится:
 
-![проверка корректности файлов](/screenshots/image2.png)
+![проверка корректности файлов](/lab4/screenshots/image2.png)
 
 ## Часть 2 - Тесная площадка
 
@@ -78,11 +78,11 @@ kubectl apply -f ~/lab3/k8s/policies/04-no-privileged.yaml
 kubectl apply -f ~/lab3/k8s/policies/05-no-latest-tag.yaml
 ```
 
-После всех этих подготовительных манипуляций я написала файл для конфига [kind-config.yaml](/kind-config.yaml) на 2 рабочих ноды + 1 ноды control-plane.
+После всех этих подготовительных манипуляций я написала файл для конфига [kind-config.yaml](/lab4/kind-config.yaml) на 2 рабочих ноды + 1 ноды control-plane.
 
 Далее я подняла кластер и проверила, что 3 ноды успешно запустились:
 
-![поднятие кластера kind](/screenshots/image3.png)
+![поднятие кластера kind](/lab4/screenshots/image3.png)
 
 И загрузила образы в `kind`:
 
@@ -94,7 +94,7 @@ kind load docker-image batch:v1 --name lab4
 
 Потом я занялась добавлением `batch` в Chart.
 
-Для этого я написала шаблон [batch-deployment.yaml](/helm/shop/templates/batch-deployment.yaml).
+Для этого я написала шаблон [batch-deployment.yaml](/lab4/helm/shop/templates/batch-deployment.yaml).
 
 В `values.yaml` добавила настройку `requests/limits` для `batch`:
 
@@ -125,7 +125,7 @@ batch:
 
 Наконец я избавилась от первой волны проблем. После сохранения изменений через `helm upgrade shop . -n shop` проверила, что все успешно встало:
 
-![проверка подов](/screenshots/image4.png)
+![проверка подов](/lab4/screenshots/image4.png)
 
 ## Часть 3 - Реальные числа вместо угадывания
 
@@ -158,8 +158,8 @@ hey -z 15m -q 20 -c 5 http://localhost:8080/orders
 
 Результаты показали, что приложение обрабатывает 4 запроса в секунду, 50% запросов выполняются 1,1 секунду, что довольно много. Почти все время (1,23 секунды в среднем) тратится на ожидание ответа от сервера (т.е. на обработку внутри `api` и запросы к базе).
 
-![результат hey](/screenshots/image5.png)
-![результат hey](/screenshots/image6.png)
+![результат hey](/lab4/screenshots/image5.png)
+![результат hey](/lab4/screenshots/image6.png)
 
 Для получения рекомендаций по более правильным значениям resources я запустила `krr`:
 
@@ -169,7 +169,7 @@ krr simple -n shop -p http://127.0.0.1:9090
 
 В результате вышла таблица со значениями:
 
-![таблица от krr](/screenshots/image7.png)
+![таблица от krr](/lab4/screenshots/image7.png)
 
 На CPU krr порекомедовал снизить значения, а на memory наоборот увеличить, что я и сделала (кроме batch, ему не хотелось бы давать много ресурсов из-за его специфики работы).
 
@@ -177,7 +177,7 @@ krr simple -n shop -p http://127.0.0.1:9090
 
 Все поды успешно поднялись без ошибок:
 
-![проверка подов](/screenshots/image8.png)
+![проверка подов](/lab4/screenshots/image8.png)
 
 ## Часть 4 - Разнеси критический сервис
 
@@ -185,13 +185,13 @@ krr simple -n shop -p http://127.0.0.1:9090
 
 Я проверила, что поды `api` распределились по двух рабочим нодам. Два пода ушли на lab-worker и один на lab-worker2.
 
-![проверка разнесения](/screenshots/image9.png)
+![проверка разнесения](/lab4/screenshots/image9.png)
 
 В случае, если одна нода упадет, то хотя бы одна реплика запустится на другой ноде.
 
 ## Часть 5 - Приоритеты и гарантии
 
-Для задания приоритетов я написала шаблон [priorityClass](/helm/shop/templates/priorityclasses.yaml). В нем я выделила класс под важные api и worker с `value: 100000` и класс под batch с `value: -10`.
+Для задания приоритетов я написала шаблон [priorityClass](/lab4/helm/shop/templates/priorityclasses.yaml). В нем я выделила класс под важные api и worker с `value: 100000` и класс под batch с `value: -10`.
 
 Также я добавила `priorityClassName` в деплойменты.
 
@@ -203,7 +203,7 @@ spec:
     {{- include "shop.spread" (dict "root" . "component" "api") | indent 6 }}
 ```
 
-В [postgres-cluster.yaml](/helm/shop/templates/postgres-cluster.yaml):
+В [postgres-cluster.yaml](/lab4/helm/shop/templates/postgres-cluster.yaml):
 
 ```yaml
 spec:
@@ -219,11 +219,11 @@ spec:
     priorityClassName: {{ .Release.Name }}-batch
 ```
 
-Потом я создала [PodDisruptionBudget](/helm/shop/templates/pdb.yaml) для `api` и `postgres` с `minAvailable: 1`.
+Потом я создала [PodDisruptionBudget](/lab4/helm/shop/templates/pdb.yaml) для `api` и `postgres` с `minAvailable: 1`.
 
 После создания я проверила, что у подов встали правильные QoS:
 
-![проверка QoS](/screenshots/image10.png)
+![проверка QoS](/lab4/screenshots/image10.png)
 
 Разница `Guaranteed` и `Burstable` заключается в очередности вытеснения. `batch` с типом `Burstable` вытесняется первым, особенно если реальное потребление превышает `requests`. Низкий `PriorityClass` делает его главной жертвой Preemption. `api` и `worker` с типом `Guaranteed` вытесняются последними, они не превышают свои резервы, и kubelet при MemoryPressure будет искать жертв среди других классов.
 
@@ -233,13 +233,13 @@ spec:
 
 При проверке подов видно, что часть batch-подов ушли в Pending:
 
-![Проверка с подами](/screenshots/image11.png)
+![Проверка с подами](/lab4/screenshots/image11.png)
 
 Дальше я увеличила количество реплик у `api` до 5, и batch-поды начали исчезать.
 
 Я посмотрела причину вытеснений и к моей радости поймала Preemption. Планировщик Kubernetes увидел, что у api высокий приоритет, и убил поды batch (низкий приоритет), чтобы освободить для него место.
 
-![preemption](/screenshots/image12.png)
+![preemption](/lab4/screenshots/image12.png)
 
 Это доказывает, что высокоприоритетные поды могут жертвовать низкоприоритетными для обеспечения SLA. Планировщик Kubernetes при нехватке ресурсов сначала убивает поды с наименьшим приоритетом.
 
@@ -255,9 +255,9 @@ spec:
 
 Поэтому, к сожалению, скриншоты с доказательством я не успела сделать, а после восстановления, когда удалось поймать момент до перезапуска, делать такое еще раз я испугалась :(
 
-Осталась только фотография меня и сходящей с ума виртуалки во время этого:
+Осталось только изображение меня и сходящей с ума виртуалки во время этого:
 
-![состояние](/screenshots/this-is-fine-fire.gif)
+![состояние](/lab4/screenshots/this-is-fine-fire.gif)
 
 Тем не менее, как я уже отмечала выше, я успела увидеть, что в первую очередь начали изменять статус batch-поды с низким приоритетом. Из-за этого я более чем уверена, что все пошло из-за памяти, т.к. больше я ничего не меняла. 
 
@@ -267,20 +267,21 @@ spec:
 
 График CPU:
 
-![График CPU](/screenshots/image13.png)
+![График CPU](/lab4/screenshots/image13.png)
 
 График Memory:
-![График Memory](/screenshots/image14.png)
+
+![График Memory](/lab4/screenshots/image14.png)
 
 Также во время увеличения CPU я гоняла `hey` и он показал довольно хорошие результаты - ни один запрос не упал с ошибкой 500.
 
-![hey](/screenshots/image15.png)
+![hey](/lab4/screenshots/image15.png)
 
 Параллельно снимались графики в Prometheus UI. Изначально PromQL-запросы не возвращали данные, так как в коде api.py метрики экспортируются с префиксом shop_api_. После корректировки запросов (добавления префикса shop_api_ и фильтра exported_endpoint="/orders") графики появились.
 
 ## Часть 9 - Мониторинг
 
-В последней части этой лабораторной я добавила в чарт shop шаблон [ServiceMonitor](/helm/shop/templates/servicemonitor.yaml), использующие стек `kube-prometheus-stack` из Лабы 2. Внутри я добавила 3 новых алерта:
+В последней части этой лабораторной я добавила в чарт shop шаблон [ServiceMonitor](/lab4/helm/shop/templates/servicemonitor.yaml), использующие стек `kube-prometheus-stack` из Лабы 2. Внутри я добавила 3 новых алерта:
 
 - `ShopApiSlaViolation` (Warning): Срабатывает, если 95-й перцентиль задержки api превышает 1.5 секунды в течение 2 минут
 
@@ -290,13 +291,13 @@ spec:
 
 Новые алерты успешно добавились в Prometheus UI:
 
-![alerts](/screenshots/image16.png)
+![alerts](/lab4/screenshots/image16.png)
 
 Для провокации алерта `ShopApiSlaViolation` я урезала CPU до 10m. Prometheus UI (Alerts) подтверждает, что алерт перешел в статус Firing:
 
-![alert firing](/screenshots/image17.png)
+![alert firing](/lab4/screenshots/image17.png)
 
 ---
 Вот такие пироги
 
-![cat](/screenshots/cat.gif)
+![cat](/lab4/screenshots/cat.gif)
