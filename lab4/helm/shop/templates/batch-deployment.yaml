@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-batch
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+    app.kubernetes.io/component: batch
+spec:
+  replicas: {{ .Values.batch.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: batch
+  template:
+    metadata:
+      labels:
+        {{- include "shop.labels" . | nindent 8 }}
+        app.kubernetes.io/component: batch
+    spec:
+      priorityClassName: {{ .Release.Name }}-batch
+      containers:
+        - name: batch
+          image: "{{ .Values.image.registry }}/{{ .Values.batch.image.repository }}:{{ .Values.batch.image.tag }}"
+          env:
+            - name: SERVICE_NAME
+              value: shop-batch
+            - name: CPU_WORKERS
+              value: {{ .Values.batch.cpuWorkers | quote }}
+            - name: MEM_STEP_MB
+              value: {{ .Values.batch.memStepMb | quote }}
+            - name: MEM_INTERVAL_S
+              value: {{ .Values.batch.memIntervalS | quote }}
+            - name: MEM_MAX_MB
+              value: {{ .Values.batch.memMaxMb | quote }}
+          resources:
+            {{- toYaml .Values.batch.resources | nindent 12 }}

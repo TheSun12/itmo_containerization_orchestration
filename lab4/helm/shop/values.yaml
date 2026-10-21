@@ -1,0 +1,82 @@
+image:
+  registry: docker.io
+  pullPolicy: IfNotPresent
+
+spread:
+  mechanism: "topologySpreadConstraints"
+  topologyKey: "kubernetes.io/hostname"
+  maxSkew: 1
+  whenUnsatisfiable: "ScheduleAnyway"
+  affinityType: "required"
+
+api:
+  replicas: 3
+  image:
+    repository: shop-api
+    tag: "v1"
+  resources:
+    requests:
+      cpu: "76m"
+      memory: "164Mi"
+    limits:
+      cpu: "76m"
+      memory: "164Mi"
+  service:
+    port: 8080
+    type: ClusterIP
+  healthCheck:
+    enabled: true
+    path: /health
+  startupDbCheck: true
+  healthFail: false
+
+worker:
+  replicas: 2
+  image:
+    repository: shop-worker
+    tag: "v1"
+  resources:
+    requests:
+      cpu: "11m"
+      memory: "100Mi"
+    limits:
+      cpu: "11m"
+      memory: "100Mi"
+  interval: 5
+
+postgres:
+  host: shop-postgres-rw
+  port: 5432
+  database: shop
+  user: shop
+  existingSecret: shop-postgres-app
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "100m"
+      memory: "256Mi"
+
+serviceMonitor:
+  enabled: true
+
+prometheusRule:
+  enabled: true
+
+batch:
+  replicas: 3
+  image:
+    repository: batch
+    tag: "v1"
+  cpuWorkers: 1
+  memStepMb: 100
+  memIntervalS: 1
+  memMaxMb: 50
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "16Mi"
+    limits:
+      cpu: "100m"
+      memory: "256Mi"

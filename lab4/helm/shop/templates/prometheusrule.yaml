@@ -1,0 +1,83 @@
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: shop-alerts
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+    release: prometheus
+spec:
+  groups:
+    - name: shop.rules
+      interval: 30s
+      rules:
+        - alert: ServiceDown
+          expr: absent(up{job="shop-api"})
+          for: 2m 
+          labels:
+            severity: critical
+            service: shop-api
+          annotations:
+            summary: "Сервис api недоступен"
+            description: "Prometheus не может скейпить дольше 2 минут. Сервис полностью упал"
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(shop_api_errors_total[2m])) by (exported_endpoint)
+            /
+            sum(rate(shop_api_requests_total[2m])) by (exported_endpoint)
+            > 0.05
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api 
+          annotations:
+            summary: 'Высокая доля ошибок на {{ "{{ $labels.exported_endpoint }}" }}'
+            description: "Доля ошибок 5хх превышает 5% дольше 2 минут"
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(shop_api_requests_duraction_seconds_bucket[2m])) by (le, exported_endpoint) 
+            ) > 2
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api 
+          annotations:
+            summary: 'Высокое время ответа на {{ "{{ $labels.exported_endpoint }}" }}'
+            description: "95% запросов выполняется дольше 2 секунд на протяжении 2 минут"
+        
+        - alert: ShopApiSlaViolation
+          expr: |
+            histogram_quantile(0.95, 
+              sum(rate(shop_api_request_duration_seconds_bucket{namespace="shop", exported_endpoint="/orders"}[5m])) by (le)) > 1.5
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api
+          annotations:
+            summary: "Нарушение SLA: задержка /orders выше 1.5с"
+            description: "95-й перцентиль задержки для эндпоинта /orders превышает целевой SLA (1.5 с) в течение 2 минут."
+
+        - alert: ShopApiErrorSpike
+          expr: |
+            sum(rate(shop_api_requests_total{namespace="shop", status=~"5.."}[5m])) 
+            / 
+            sum(rate(shop_api_requests_total{namespace="shop"}[5m])) > 0.01
+          for: 2m
+          labels:
+            severity: critical
+            service: shop-api
+          annotations:
+            summary: "Всплеск 5xx ошибок на API"
+            description: "Доля ответов с кодом 5xx превысила 1% за последние 5 минут. Требуется вмешательство."
+
+        - alert: ShopBatchOOMKilled
+          expr: increase(kube_pod_container_status_last_terminated_reason{namespace="shop", reason="OOMKilled", pod=~"shop-batch-.*"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+            service: shop-batch
+          annotations:
+            summary: "Фоновый под batch убит по OOM"
+            description: "Под batch превысил лимит памяти и был вытеснен. Критический путь (api) защищен, но фоновая нагрузка деградировала."
+{{- end }}
