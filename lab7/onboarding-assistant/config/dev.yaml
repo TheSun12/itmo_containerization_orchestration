@@ -1,0 +1,4 @@
+# Конфигурация для локальной разработки
+debug: true
+clickhouse_host: localhost
+redis_host: localhost
