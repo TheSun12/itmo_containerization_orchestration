@@ -34,9 +34,9 @@
 
 ## Часть 3 - Запусти локально
 
-Я создала 4 директории для работы: `config` с конфигурацией окружения, `docs` с документацией, `scripts` со вспомогательными скриптами и `src` с кодом приложения. Внутри этих папок я подготовила необходимые файлы. Все находится внутри директории [onboarding-assistant](/onboarding-assistant).
+Я создала 4 директории для работы: `config` с конфигурацией окружения, `docs` с документацией, `scripts` со вспомогательными скриптами и `src` с кодом приложения. Внутри этих папок я подготовила необходимые файлы. Все находится внутри директории [onboarding-assistant](/lab7/onboarding-assistant).
 
-![структура работы](/screenshots/image1.png)
+![структура работы](/lab7/screenshots/image1.png)
 
 Далее я запустила `n8n` в docker:
 
@@ -80,17 +80,17 @@ docker run -d --name mcp-memory --network mcp-net -p 8082:8000 \
 
 Проверила, все запустилось:
 
-![проверка mcp client](/screenshots/image2.png)
+![проверка mcp client](/lab7/screenshots/image2.png)
 
 Далее я подключила запущенные MCP-сервисы.
 
 Запущенный `Filesystem MCP`:
 
-![Filesystem MCP](/screenshots/image3.png)
+![Filesystem MCP](/lab7/screenshots/image3.png)
 
 Запущенный `Memory MCP`:
 
-![Memory MCP](/screenshots/image4.png)
+![Memory MCP](/lab7/screenshots/image4.png)
 
 Следующим этапом нужно было добавить AI-агента. Для этого я установила Ollama и скачала оттуда модель `llama3.2:latest` (пробовала еще qwen2.5 в качестве еще более легковесного варианта, но с ней результаты были совсем плохонькие):
 
@@ -107,23 +107,23 @@ ollama pull llama3.2
 
 В `Ollama Chat Model` я добавила URL для локального доступа к модели:
 
-![ollama chat model](/screenshots/image6.png)
+![ollama chat model](/lab7/screenshots/image6.png)
 
 В `AI Agent` я ввела promt, system message и включила настройку `Force Tool Call on First Iteration`, потому что сначала я споткнулась на том, что агент вообще не хотел залезать в файлы и писать отсебятину.
 
-![ai agent](/screenshots/image7.png)
+![ai agent](/lab7/screenshots/image7.png)
 
 Полный `System Message`:
 
-![system message](/screenshots/image8.png)
+![system message](/lab7/screenshots/image8.png)
 
 После первого запуска агент отдавал ответ в виде `json` с техническими результатами работы и не создавал новый файл с ответом. Чтобы решить эту проблему, был создан новый `MCP Client`, который сохранял результат в md-файл:
 
-![mcp client](/screenshots/image9.png)
+![mcp client](/lab7/screenshots/image9.png)
 
 Получившаяся структура `workflow` выглядит так:
 
-![Итоговая структура workflow](/screenshots/image5.png)
+![Итоговая структура workflow](/lab7/screenshots/image5.png)
 
 ## Часть 4 - Мониторинг
 
@@ -147,7 +147,7 @@ ollama pull llama3.2
 
   `rate(n8n_workflow_execution_duration_seconds_count[5m])`
 
-![дашборды](/screenshots/image10.png)
+![дашборды](/lab7/screenshots/image10.png)
 
 Также я сделала алерты. Решила для разнообразия сделать их через Grafana:
 
@@ -163,10 +163,10 @@ ollama pull llama3.2
 
   `rate(n8n_workflow_execution_duration_seconds_count[5m])`
 
-![Алерты](/screenshots/image11.png)
+![Алерты](/lab7/screenshots/image11.png)
 
 ---
 
 Вот такие пироги
 
-![кот](/screenshots/cat.gif)
+![кот](/lab7/screenshots/cat.gif)
